@@ -24,14 +24,32 @@ premium_session_logs2 <-
   session_position, session_length, skip_1, skip_2, not_skipped, context_switch, 
   hist_user_behavior_is_shuffle, hour_of_day, context_type))
 
+#Create new outcome variable containing information from both skip_1 and skip_2
+premium_session_logs2$skip_2 <- as.integer(as.logical(premium_session_logs2$skip_2))
+premium_session_logs2$skip_outcome <- premium_session_logs2$skip_2
+#outcome variable: zero is not skipped, 1 is skipped
+
+#Create predictor variable previously skipped songs
+df_previously_skipped <- premium_session_logs2 %>%
+  group_by(session_id) %>%
+  summarize(cumsum(skip_outcome))
+
+premium_session_logs2$previously_skipped <- df_previously_skipped$`cumsum(skip_outcome)`
+
 #Create subset of relevant track feature variables
 track_features_key <- 
   subset(track_features, select = c(track_id, release_year, us_popularity_estimate,
-  ) )
+                                    acoustic_vector_0, acoustic_vector_1, acoustic_vector_2,
+                                    acoustic_vector_3, acoustic_vector_4, acoustic_vector_5,
+                                    acoustic_vector_6, acoustic_vector_7) )
 
-#Create new dataset including both track information and the session logs
-premium_session_track <- inner_join(premium_session_logs, track_features, 
+#Create new dataframe including both track information and the session logs
+data_clean <- inner_join(premium_session_logs2, track_features_key, 
                                     by = c("track_id_clean" = "track_id"))
+
+#Make a similarity measure
+library("SimilarityMeasures")
+
 
 #BOOSTED TREES ----
 #load libraries
