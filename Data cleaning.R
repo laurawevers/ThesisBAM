@@ -319,7 +319,7 @@ means_ac_skip <-
          mean_ac_7_skip = mean(ac_7_avg_skip))
 #merge together
 
-
+save(data_clean_merged, file = "data_clean_merged.Rdata")
 #if else statement, if previously_skip = 0, NA, otherwise, mean_ac_k_skip
 
 
@@ -336,14 +336,5 @@ rolling_mean_listen <-
   group_by(session_id) %>%
   summarize(cummean(acoustic_vector_0))
 
-#BOOSTED TREES ----
-#load libraries
-library("tidymodels")
-library("doParallel")
-library("themis")
-library("xgboost")
 
-#KNN CLASSIFIER ----
-library("tidyverse")
-library("tidymodels")
 
