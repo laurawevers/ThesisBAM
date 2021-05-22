@@ -179,7 +179,114 @@ gb_recipe <- recipe(skip_outcome ~ hist_user_behavior_is_shuffle + hour_of_day +
                     previously_skipped + release_year  + us_popularity_estimate +
                     "similarity measures",
                     data = data_clean_merged) %>%
-  step_dummy(hist_user_behavior_is_shuffle, one_hot = TRUE) %>%
+  step_dummy(hist_user_behavior_is_shuffle, one_hot = TRUE) %>% #creates one dummy variable for each category
   step_downsample(skip_outcome)
 
+#specify the xgboost model for classification
+gb_model_tune <-
+  boost_tree(trees = tune(), tree_depth = tune(),
+             learn_rate = tune(), stop_iter = 500) %>% #model stops after 500 iteration
+  set_mode("classification") %>%
+  set_engine("xgboost")
 
+#combine into a workflow for tuning
+gb_tune_wf <- worflow() %>%
+  add_recipe(gb_recipe) %>%
+  add_model(gb_model_tune)
+
+#perform tuning
+#metrics to take into account
+class_metrics <- metric_set(accuracy, kap, sensitivity, 
+                            specificity, roc_auc)
+
+#parallel computing to speed up the process
+registerDoParallel()
+
+#grid search over a grid we constructed ourselves
+gb_grid <- expand.grid(trees = 500 * 1:20, #moet nog getuned worden
+                        learn_rate = c(0.1, 0.01), #twee learning rates
+                        tree_depth = 1:3) #treed depth is meestal tussen de 1 en 3
+
+#tuning grid
+xgb_tune_res <- tune_grid(
+  gb_tune_wf,
+  resamples = cv_folds,
+  grid = gb_grid,
+  metrics = class_metrics
+)
+
+#selecting the tuning parameters values
+xgb_tune_metrics <- xgb_tune_res %>%
+  collect_metrics()
+
+#visualize
+#accuracy
+gb_tune_metrics %>% 
+  filter(.metric == "accuracy") %>% 
+  ggplot(aes(x = trees, y = 1 - mean, 
+             colour = factor(tree_depth))) +
+  geom_path() +
+  labs(y = "Misclassification rate") + 
+  facet_wrap(~ learn_rate)
+
+#sensitivity
+gb_tune_metrics %>% 
+  filter(.metric == "sens") %>% 
+  ggplot(aes(x = trees, y = mean, 
+             colour = factor(tree_depth))) +
+  geom_path() +
+  labs(y = "Sensitivity") + 
+  facet_wrap(~ learn_rate)
+
+#specificity
+gb_tune_metrics %>% 
+  filter(.metric == "spec") %>% 
+  ggplot(aes(x = trees, y = mean, 
+             colour = factor(tree_depth))) +
+  geom_path() +
+  labs(y = "Specificity") + 
+  facet_wrap(~ learn_rate)
+
+#allemaal bij elkaar
+gb_tune_res %>% 
+  collect_metrics() %>%
+  filter(.metric %in% c("accuracy", "sens", "spec")) %>%
+  ggplot(aes(x = trees, y = mean, colour = .metric)) +
+  geom_path() +
+  facet_wrap(learn_rate ~ tree_depth)
+
+#metrics met elkaar vergelijken
+gb_tune_metrics %>% 
+  filter(tree_depth == 1, learn_rate == 0.01, trees >= 3000 & trees <= 6000) %>% 
+  select(trees:learn_rate, .metric, mean) %>%
+  pivot_wider(trees:learn_rate,
+              names_from = .metric,
+              values_from = mean)
+
+#get the best fit
+gb_best <- gb_tune_metrics %>% 
+  filter(.metric == "accuracy", tree_depth == 1, learn_rate == 0.01, trees == 3500)
+gb_final_wf <- finalize_workflow(gb_tune_wf, gb_best)
+
+#test performance
+gb_final_fit <- gb_final_wf %>%
+  last_fit(lc_split, metrics = class_metrics)
+
+gb_final_fit %>%
+  collect_metrics()
+
+#confusion matrix 
+gb_final_fit %>% collect_predictions() %>% 
+  conf_mat(truth = loan_status, estimate = .pred_class) 
+
+gb_final_fit %>% collect_predictions() %>% 
+  roc_curve(loan_status, .pred_Default) %>% 
+  autoplot()
+
+gb_final_fit %>% collect_predictions() %>% 
+  lift_curve(loan_status, .pred_Default) %>% 
+  autoplot()
+
+gb_final_fit %>% collect_predictions() %>% 
+  gain_curve(loan_status, .pred_Default) %>% 
+  autoplot()
