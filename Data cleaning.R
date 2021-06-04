@@ -291,12 +291,16 @@ data_clean_merged$ac_4_avg <- NULL
 data_clean_merged$ac_5_avg <- NULL
 data_clean_merged$ac_6_avg <- NULL
 data_clean_merged$ac_7_avg <- NULL
+data_clean_merged$count <- NULL
 
 #mean values and NA for no values listen/skip
+
+#means listen data
 means_ac_listen <-
   data_clean_merged %>%
+  filter(skip_outcome == "0") %>%
   group_by(session_id) %>%
-  mutate(mean_ac_0_listen = mean(ac_0_avg_listen),
+  summarize(mean_ac_0 = mean(ac_0_avg_listen),
          mean_ac_1_listen = mean(ac_1_avg_listen),
          mean_ac_2_listen = mean(ac_2_avg_listen),
          mean_ac_3_listen = mean(ac_3_avg_listen),
@@ -304,12 +308,17 @@ means_ac_listen <-
          mean_ac_5_listen = mean(ac_5_avg_listen),
          mean_ac_6_listen = mean(ac_6_avg_listen),
          mean_ac_7_listen = mean(ac_7_avg_listen))
-#merge together
 
+#merge
+data_clean_merged_2 <- data_clean_merged
+data_clean_merged_2 <- inner_join(data_clean_merged_2, means_ac_listen, by = "session_id")
+
+#means skip data
 means_ac_skip <-
   data_clean_merged %>%
+  filter(skip_outcome == 1) %>%
   group_by(session_id) %>%
-  mutate(mean_ac_0_skip = mean(ac_0_avg_skip),
+  summarize(mean_ac_0 = mean(ac_0_avg_skip),
          mean_ac_1_skip = mean(ac_1_avg_skip),
          mean_ac_2_skip = mean(ac_2_avg_skip),
          mean_ac_3_skip = mean(ac_3_avg_skip),
@@ -317,24 +326,24 @@ means_ac_skip <-
          mean_ac_5_skip = mean(ac_5_avg_skip),
          mean_ac_6_skip = mean(ac_6_avg_skip),
          mean_ac_7_skip = mean(ac_7_avg_skip))
+
 #merge together
+data_clean_merged_2 <- inner_join(data_clean_merged_2, means_ac_skip, by = "session_id")
 
-save(data_clean_merged, file = "data_clean_merged.Rdata")
-#if else statement, if previously_skip = 0, NA, otherwise, mean_ac_k_skip
+#if zero, mean, else, normale value
+#ff voor alle vectors doen
+data_clean_merged_2$cum_avg_ac_0 <- as.numeric(ifelse(data_clean_merged_2$'ac_0_avg_listen' == 0, data_clean_merged_2$'mean_ac_0.x', 
+        data_clean_merged_2$'ac_0_avg_listen'))
+
+#save new data file
+save(data_clean_merged_2, file = "data_clean_merged_2.Rdata")
+load("data_clean_merged_2.Rdata")
 
 
-#The difference in acoustic featured compared to previously listened (NOT SKIPPED)
-#songs, where it is expected that the larger the absolute difference is,
-#the more likely it is the song will be skipped
-data_clean_merged$ac_0_diff <- abs(data_clean_merged$acoustic_vector_0) - abs(data_clean_merged$ac_0_avg)
+
+#similarity measure, take the difference between the columns
 
 
-#take 2
-data_clean_2 <- data_clean
-rolling_mean_listen <-
-  data_clean_2 %>%
-  group_by(session_id) %>%
-  summarize(cummean(acoustic_vector_0))
 
 
 
