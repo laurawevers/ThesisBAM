@@ -330,20 +330,213 @@ means_ac_skip <-
 #merge together
 data_clean_merged_2 <- inner_join(data_clean_merged_2, means_ac_skip, by = "session_id")
 
+#AVG LISTEN VOOR SIMILARITY
 #if zero, mean, else, normale value
-#ff voor alle vectors doen
-data_clean_merged_2$cum_avg_ac_0 <- as.numeric(ifelse(data_clean_merged_2$'ac_0_avg_listen' == 0, data_clean_merged_2$'mean_ac_0.x', 
-        data_clean_merged_2$'ac_0_avg_listen'))
+data_clean_merged_2$cum_avg_listen_ac_0 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_0_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_0.x', 
+                    data_clean_merged_2$'ac_0_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_1 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_1_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_1_listen', 
+                    data_clean_merged_2$'ac_1_avg_listen'))
+
+
+data_clean_merged_2$cum_avg_listen_ac_2 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_2_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_2_listen', 
+                    data_clean_merged_2$'ac_2_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_3 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_3_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_3_listen', 
+                    data_clean_merged_2$'ac_3_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_4 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_4_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_4_listen', 
+                    data_clean_merged_2$'ac_4_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_5 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_5_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_5_listen', 
+                    data_clean_merged_2$'ac_5_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_6 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_6_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_6_listen', 
+                    data_clean_merged_2$'ac_6_avg_listen'))
+
+data_clean_merged_2$cum_avg_listen_ac_7 <- 
+  as.numeric(ifelse(data_clean_merged_2$'ac_7_avg_listen' == 0, 
+                    data_clean_merged_2$'mean_ac_7_listen', 
+                    data_clean_merged_2$'ac_7_avg_listen'))
+
+#AVG SKIP VOOR SIMILARITY
+#if zero, mean, else normal value
+
+data_clean_merged_2$cum_avg_skip_0 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_0_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_0.y',
+                    data_clean_merged_2$'ac_0_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_1 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_1_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_1_skip',
+                    data_clean_merged_2$'ac_1_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_2 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_2_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_2_skip',
+                    data_clean_merged_2$'ac_2_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_3 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_3_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_3_skip',
+                    data_clean_merged_2$'ac_3_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_4 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_4_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_4_skip',
+                    data_clean_merged_2$'ac_4_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_5 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_5_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_5_skip',
+                    data_clean_merged_2$'ac_5_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_6 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_6_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_6_skip',
+                    data_clean_merged_2$'ac_6_avg_skip'))
+
+data_clean_merged_2$cum_avg_skip_7 <-
+  as.numeric(ifelse(data_clean_merged_2$'ac_7_avg_skip' == 0,
+                    data_clean_merged_2$'mean_ac_7_skip',
+                    data_clean_merged_2$'ac_7_avg_skip'))
+
+#DELETE IRRELEVANT COLUMNS
+data_clean_merged_2$ac_0_avg_listen <- NULL
+data_clean_merged_2$ac_1_avg_listen <- NULL
+data_clean_merged_2$ac_2_avg_listen <- NULL
+data_clean_merged_2$ac_3_avg_listen <- NULL
+data_clean_merged_2$ac_4_avg_listen <- NULL
+data_clean_merged_2$ac_5_avg_listen <- NULL
+data_clean_merged_2$ac_6_avg_listen <- NULL
+data_clean_merged_2$ac_7_avg_listen <- NULL
+
+data_clean_merged_2$ac_0_avg_skip <- NULL
+data_clean_merged_2$ac_1_avg_skip <- NULL
+data_clean_merged_2$ac_2_avg_skip <- NULL
+data_clean_merged_2$ac_3_avg_skip <- NULL
+data_clean_merged_2$ac_4_avg_skip <- NULL
+data_clean_merged_2$ac_5_avg_skip <- NULL
+data_clean_merged_2$ac_6_avg_skip <- NULL
+data_clean_merged_2$ac_7_avg_skip <- NULL
+
+data_clean_merged_2$mean_ac_0.x <- NULL
+data_clean_merged_2$mean_ac_1_listen <- NULL
+data_clean_merged_2$mean_ac_2_listen <- NULL
+data_clean_merged_2$mean_ac_3_listen <- NULL
+data_clean_merged_2$mean_ac_4_listen <- NULL
+data_clean_merged_2$mean_ac_5_listen <- NULL
+data_clean_merged_2$mean_ac_6_listen <- NULL
+data_clean_merged_2$mean_ac_7_listen <- NULL
+
+data_clean_merged_2$mean_ac_0.y <- NULL
+data_clean_merged_2$mean_ac_1_skip <- NULL
+data_clean_merged_2$mean_ac_2_skip <- NULL
+data_clean_merged_2$mean_ac_3_skip <- NULL
+data_clean_merged_2$mean_ac_4_skip <- NULL
+data_clean_merged_2$mean_ac_5_skip <- NULL
+data_clean_merged_2$mean_ac_6_skip <- NULL
+data_clean_merged_2$mean_ac_7_skip <- NULL
 
 #save new data file
 save(data_clean_merged_2, file = "data_clean_merged_2.Rdata")
 load("data_clean_merged_2.Rdata")
 
-
-
 #similarity measure, take the difference between the columns
+#SIMILARITY LISTEN
+data_clean_merged_2$similarity_listen_av_0 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_0 - data_clean_merged_2$acoustic_vector_0)
+
+data_clean_merged_2$similarity_listen_av_1 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_1 - data_clean_merged_2$acoustic_vector_1)
+
+data_clean_merged_2$similarity_listen_av_2 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_2 - data_clean_merged_2$acoustic_vector_2)
+
+data_clean_merged_2$similarity_listen_av_3 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_3 - data_clean_merged_2$acoustic_vector_3)
+
+data_clean_merged_2$similarity_listen_av_4 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_4 - data_clean_merged_2$acoustic_vector_4)
+
+data_clean_merged_2$similarity_listen_av_5 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_5 - data_clean_merged_2$acoustic_vector_5)
+
+data_clean_merged_2$similarity_listen_av_6 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_6 - data_clean_merged_2$acoustic_vector_6)
+
+data_clean_merged_2$similarity_listen_av_7 <- 
+  abs(data_clean_merged_2$cum_avg_listen_ac_7 - data_clean_merged_2$acoustic_vector_7)
+  
+#SIMILARITY SKIP
+
+data_clean_merged_2$similarity_skip_av_0 <-
+  abs(data_clean_merged_2$cum_avg_skip_0 - data_clean_merged_2$acoustic_vector_0)
+
+data_clean_merged_2$similarity_skip_av_1 <-
+  abs(data_clean_merged_2$cum_avg_skip_1 - data_clean_merged_2$acoustic_vector_1)
+
+data_clean_merged_2$similarity_skip_av_2 <-
+  abs(data_clean_merged_2$cum_avg_skip_2 - data_clean_merged_2$acoustic_vector_2)
+
+data_clean_merged_2$similarity_skip_av_3 <-
+  abs(data_clean_merged_2$cum_avg_skip_3 - data_clean_merged_2$acoustic_vector_3)
+
+data_clean_merged_2$similarity_skip_av_4 <-
+  abs(data_clean_merged_2$cum_avg_skip_4 - data_clean_merged_2$acoustic_vector_4)
+
+data_clean_merged_2$similarity_skip_av_5 <-
+  abs(data_clean_merged_2$cum_avg_skip_5 - data_clean_merged_2$acoustic_vector_5)
+
+data_clean_merged_2$similarity_skip_av_6 <-
+  abs(data_clean_merged_2$cum_avg_skip_6 - data_clean_merged_2$acoustic_vector_6)
+
+data_clean_merged_2$similarity_skip_av_7 <-
+  abs(data_clean_merged_2$cum_avg_skip_7 - data_clean_merged_2$acoustic_vector_7)
+
+#DELETE IRRELEVANT COLUMNS
+data_clean_merged_2$cum_avg_listen_ac_0 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_1 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_2 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_3 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_4 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_5 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_6 <- NULL
+data_clean_merged_2$cum_avg_listen_ac_7 <- NULL
+
+data_clean_merged_2$cum_avg_skip_0 <- NULL
+data_clean_merged_2$cum_avg_skip_1 <- NULL
+data_clean_merged_2$cum_avg_skip_2 <- NULL
+data_clean_merged_2$cum_avg_skip_3 <- NULL
+data_clean_merged_2$cum_avg_skip_4 <- NULL
+data_clean_merged_2$cum_avg_skip_5 <- NULL
+data_clean_merged_2$cum_avg_skip_6 <- NULL
+data_clean_merged_2$cum_avg_skip_7 <- NULL
+
+#save final data file
+data_final <- data_clean_merged_2
+data_final$context_switch <- as.factor(data_final$context_switch)
+data_final$context_type <- as.factor(data_final$context_type)
+data_final$skip_outcome <- as.factor(data_final$skip_outcome)
+data_final$hist_user_behavior_is_shuffle <- as.factor(data_final$hist_user_behavior_is_shuffle)
+save(data_final, file = "data_final.Rdata")
 
 
-
+str(data_final)
 
 
