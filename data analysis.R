@@ -91,6 +91,12 @@ data_final %>%
   count(skip_outcome) %>%
   mutate(prop = n/sum(n))
 
+data_final %>%
+  ggplot(aes(hist_user_behavior_is_shuffle, previously_skipped, color = 
+           hist_user_behavior_is_shuffle)) + geom_boxplot() +
+  xlab("Shuffle mode") + ylab("Number of songs skipped per session")
+ggsave("boxplot shuffle skips.png")
+
 #acoustic vector 0 en 1 en skipped or not skipped
 ggplot(data_final, aes(x = acoustic_vector_0, y = acoustic_vector_1,
                               colour = skip_outcome)) +
